@@ -147,7 +147,7 @@ module.exports = {
 				return _this.toggle();
 			};
 		})(this));
-
+		
 		atom.views.getView(atom.workspace).classList.add("live-2d");
 		atom.notifications.onDidAddNotification((function(_this) {
 			return function(notification) {
@@ -155,6 +155,12 @@ module.exports = {
 			};
 		})(this));
 
+		atom.commands.add('atom-text-editor', "atom-live2d:reload", (function(_this) {
+			return function() {
+				return _this.reload();
+			};
+		})(this));	
+		
 		atom.config.onDidChange('atom-live2d.modelOpacity', (function(_this) {
 			return function(arg) {
 				var newValue, oldValue;
@@ -170,7 +176,6 @@ module.exports = {
 		var ref;
 		this.audio = null;
 		this.element.remove();
-		this.iframe.remove();
 		if ((ref = this.timer) != null) {
 			ref.stop();
 		}
@@ -218,12 +223,14 @@ module.exports = {
 		this.iframe.src = `atom://atom-live2d/index.html`;
 		this.iframe.name = `${atom.config.get("atom-live2d.width")};${atom.config.get("atom-live2d.height")}`;
 		this.iframe.id = 'live2d';
+		this.iframe.style = "bottom: 30px;";
 		this.iframe.onload = () => {
 			this.loadCurrentModel();
 			this.loadMotionGroup();
 			this.iframe.contentWindow.document.body.appendChild(css);
 			if(atom.config.get('atom-live2d.followCursor'))
 				atom.views.getView(atom.workspace).addEventListener('mousemove', (e) => {
+					//console.log(e);
 					if(atom.config.get('atom-live2d.followCursor'))
 						this.callOnWindow('followPointer', e);
 				});
@@ -237,7 +244,7 @@ module.exports = {
 			}
 		`;
 
-		atom.views.getView(atom.workspace).querySelector('atom-workspace-axis.vertical>atom-pane-container.panes atom-pane.pane').appendChild(this.iframe);
+		atom.views.getView(atom.workspace).appendChild(this.iframe);
 
 		/*[
 			'lib/live2d.min',
@@ -265,11 +272,15 @@ module.exports = {
 	},
 	reload: function() {
 		this.deactivate();
+		/* added code */
+		wrks = document.getElementsByTagName("atom-workspace")[0]
+		old = document.getElementById("live2d")
+		wrks.removeChild(old)
+		/* ends here*/
 		this.loadConfig(atom.config.get("atom-live2d.model"));
 		return this.init();
 	},
 	toggle: function() {
-		this.iframe.contentWindow.postMessage('toggle', '*');
 		return atom.views.getView(atom.workspace).classList.toggle("live-2d");
 	},
 	startVoice: function(d) {

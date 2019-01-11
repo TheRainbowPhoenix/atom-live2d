@@ -1,11 +1,10 @@
 var l2dthisRef = this;
 // JavaScriptで発生したエラーを取得
 const EYE_PARAM = 'PARAM_EYE_R_OPEN';
-let drawing = true;
 
 function atomLive2d(model)
 {
-	console.log("우리의 핵심목표는 이것이다 : " + model);
+	console.log("Load : " + model);
 	this.platform = window.navigator.platform.toLowerCase();
 
 	this.live2DMgr = new LAppLive2DManager();
@@ -33,10 +32,6 @@ function atomLive2d(model)
 
 	// モデル用マトリクスの初期化と描画の開始
 	init(model);
-	
-	window.addEventListener('message', () => {
-		drawing = !drawing;
-	}, false);
 }
 
 
@@ -126,7 +121,7 @@ function startDraw() {
 	if(!this.isDrawStart) {
 		this.isDrawStart = true;
 		(function tick() {
-				if(drawing) draw(); // 1回分描画
+				draw(); // 1回分描画
 
 				var requestAnimationFrame =
 					window.requestAnimationFrame ||
@@ -310,12 +305,30 @@ function modelTurnHead(event)
  */
 function followPointer(event)
 {
-	var rect = event.target.getBoundingClientRect();
-
-	var sx = transformScreenX(event.clientX - rect.left);
+	
+	var rect = document.getElementsByTagName("body")[0].getBoundingClientRect();
+	
+	/*try {
+		// console.log(event.target)
+		var rect = event.target.getBoundingClientRect();
+	}
+	catch(error) {
+		var rect = document.getElementsByTagName("body")[0].getBoundingClientRect();
+	}*/
+	
+	//console.log(event.clientX - rect.left);
+	//console.log(event.clientY - rect.top);
+	
+	var sx = transformScreenX(0);
+	//var vx = transformViewX(0);
+	//var sx = transformScreenX(event.clientX - rect.left);
 	var sy = transformScreenY(event.clientY - rect.top);
 	var vx = transformViewX(event.clientX - rect.left);
 	var vy = transformViewY(event.clientY - rect.top);
+	
+	vx-=2;
+	
+	console.log(vx);
 
 	if (LAppDefine.DEBUG_MOUSE_LOG)
 		l2dLog("onMouseMove device( x:" + event.clientX + " y:" + event.clientY + " ) view( x:" + vx + " y:" + vy + ")");
@@ -327,6 +340,7 @@ function followPointer(event)
 
 		l2dthisRef.dragMgr.setPoint(vx, vy); // その方向を向く
 	//}
+	
 }
 
 
