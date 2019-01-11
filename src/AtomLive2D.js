@@ -327,6 +327,7 @@ function followPointer(event)
 	var vy = transformViewY(event.clientY - rect.top);
 	
 	vx-=2;
+	vx = vx/2;
 	
 	console.log(vx);
 
