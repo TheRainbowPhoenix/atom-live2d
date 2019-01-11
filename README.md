@@ -100,3 +100,13 @@ Put the `model.json` of live 2d model address in the settings.
 	"physics":"hibiki.physics.json"
 }
 ```
+
+## Phoebe's edit notes :
+`followPointer(event)` have been changed into `AtomLive2D.js`
+> `var rect = document.getElementsByTagName("body")[0].getBoundingClientRect();`
+
+`event.target.getBoundingClientRect()` made the ide crash
+
+> `vx-=2;`
+
+somehow this make the model look more realistic
